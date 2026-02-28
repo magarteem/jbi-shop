@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronRight, Package, Phone, Search } from "lucide-react";
+import { Suspense } from "react";
+import { ChevronRight, Package, Phone } from "lucide-react";
 import { getCategoryBySlug, getCategories, getPosts } from "@/lib/api";
 import type { Metadata } from "next";
 import ProductCard from "@/components/ProductCard";
+import SearchInput from "@/components/SearchInput";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -127,24 +129,11 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         )}
 
         {/* Search */}
-        <form className="mb-6" method="GET">
-          <div className="flex items-center gap-3 bg-white rounded-xl border border-[var(--border)] px-5 py-3 max-w-md shadow-sm">
-            <Search size={18} className="text-[var(--muted)] shrink-0" />
-            <input
-              type="text"
-              name="q"
-              defaultValue={q ?? ""}
-              placeholder="Поиск по названию..."
-              className="flex-1 text-sm outline-none bg-transparent placeholder-[var(--muted)]"
-            />
-            <button
-              type="submit"
-              className="text-xs bg-[var(--primary)] text-white rounded-lg px-3 py-1.5 hover:bg-[var(--primary-dark)] transition-colors"
-            >
-              Найти
-            </button>
-          </div>
-        </form>
+        <div className="mb-6">
+          <Suspense>
+            <SearchInput placeholder="Поиск по названию..." />
+          </Suspense>
+        </div>
 
         {/* Products grid */}
         {posts.length > 0 ? (
@@ -177,11 +166,10 @@ export default async function CategoryPage({ params, searchParams }: Props) {
                       <Link
                         key={p}
                         href={`/catalog/${slug}?page=${p}${q ? `&q=${q}` : ""}`}
-                        className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm font-medium transition-colors ${
-                          p === currentPage
-                            ? "bg-[var(--primary)] text-white"
-                            : "border border-[var(--border)] bg-white hover:border-[var(--primary)] text-[var(--foreground)]"
-                        }`}
+                        className={`w-9 h-9 flex items-center justify-center rounded-xl text-sm font-medium transition-colors ${p === currentPage
+                          ? "bg-[var(--primary)] text-white"
+                          : "border border-[var(--border)] bg-white hover:border-[var(--primary)] text-[var(--foreground)]"
+                          }`}
                       >
                         {p}
                       </Link>
